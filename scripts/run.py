@@ -4,6 +4,7 @@ import rospy
 import actionlib
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from geometry_msgs.msg import Pose, PoseWithCovarianceStamped, Point, Quaternion, Twist
+from sound_play.libsoundplay import SoundClient
 
 point_x = 0
 point_y = 0
@@ -12,6 +13,11 @@ point_z = 0
 def init():
   rospy.init_node('robot_amcl', anonymous=False)
   rospy.on_shutdown(shutdown)
+
+def shutdown():
+  rospy.loginfo("shutdown...")
+
+def run():
   move_base = actionlib.SimpleActionClient("move_base", MoveBaseAction)
   rospy.loginfo("wait for the action server to come up")
   # wait for move_base server
@@ -31,11 +37,14 @@ def init():
   else:
     rospy.loginfo("Not success, dumb robot...")
 
-def shutdown():
-  rospy.loginfo("shutdown...")
+def sound_play(word):
+  sound_handle = SoundClient()
+  rospy.sleep(1)
+  sound_handle.say(word)
 
 if __name__ == '__main__':
   try:
     init()
+    sound_play("shabiiiiiiiiii")
   except rospy.ROSInterruptException:
     rospy.loginfo("Exception thrown")
