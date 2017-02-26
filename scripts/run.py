@@ -5,46 +5,55 @@ import actionlib
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from geometry_msgs.msg import Pose, PoseWithCovarianceStamped, Point, Quaternion, Twist
 from sound_play.libsoundplay import SoundClient
+from kobuki_msgs.msg import ButtonEvent
 
-point_x = 0
-point_y = 0
-point_z = 0
+class roa():
+  point_x = 0
+  point_y = 0
 
-def init():
-  rospy.init_node('robot_amcl', anonymous=False)
-  rospy.on_shutdown(shutdown)
+  def __init__(self):
+    rospy.init_node('robot_amcl', anonymous=False)
+    rospy.on_shutdown(self.shutdown)
+    
+    rospy.Subscriber("/mobile_base/events/button", ButtonEvent, self.button_event)
 
-def shutdown():
-  rospy.loginfo("shutdown...")
+    # init actionlib
+    self.move_base = actionlib.SimpleActionClient("move_base", MoveBaseAction)
+    rospy.loginfo("wait for the action server to come up")
+    # wait for move_base server
+    self.move_base.wait_for_server()
 
-def run():
-  move_base = actionlib.SimpleActionClient("move_base", MoveBaseAction)
-  rospy.loginfo("wait for the action server to come up")
-  # wait for move_base server
-  move_base.wait_for_server()
-  
-  goal = MoveBaseGoal()
-  goal.target_pose.header.frame_id = 'map'
-  goal.target_pose.header.stamp = rospy.Time.now()
-  goal.target_pose.pose = Pose(Point(point_x, point_y, point_z), Quaternion(0,0,0,0))
+  def shutdown(self):
+    rospy.loginfo("shutdown...")
 
-  move_base.send_goal(goal)
+  def button_event(self, data):
+    if (data.button = ButtonEvent.Button0):
+      rospy.loginfo("press button 0") 
 
-  is_success = move_base.wait_for_result()
+  def run(self):
+    goal = MoveBaseGoal()
+    goal.target_pose.header.frame_id = 'map'
+    goal.target_pose.header.stamp = rospy.Time.now()
+    goal.target_pose.pose = Pose(Point(self.point_x, self.point_y, 0), Quaternion(0,0,0,1.0))
 
-  if is_success:
-    rospy.loginfo("Successful reach point")
-  else:
-    rospy.loginfo("Not success, dumb robot...")
+    self.move_base.send_goal(goal)
 
-def sound_play(word):
-  sound_handle = SoundClient()
-  rospy.sleep(1)
-  sound_handle.say(word)
+    is_success = self.move_base.wait_for_result()
+
+    if is_success:
+      rospy.loginfo("Successful reach point")
+      self.sound_play("Please give me coffee, thanks!")    
+    else:
+      rospy.loginfo("Not success, dumb robot...")
+
+  def sound_play(self, word):
+    sound_handle = SoundClient()
+    rospy.sleep(1)
+    sound_handle.say(word)
 
 if __name__ == '__main__':
   try:
-    init()
-    sound_play("shabiiiiiiiiii")
+    r = roa()
+    r.run()
   except rospy.ROSInterruptException:
     rospy.loginfo("Exception thrown")
