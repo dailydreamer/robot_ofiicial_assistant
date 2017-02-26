@@ -10,12 +10,17 @@ from kobuki_msgs.msg import ButtonEvent
 class roa():
   point_x = 0
   point_y = 0
+  is_finish_fetching = False
 
   def __init__(self):
     rospy.init_node('robot_amcl', anonymous=False)
     rospy.on_shutdown(self.shutdown)
-    
+
     rospy.Subscriber("/mobile_base/events/button", ButtonEvent, self.button_event)
+
+    # init sound handle
+    self.sound_handle = SoundClient()
+    rospy.sleep(1)
 
     # init actionlib
     self.move_base = actionlib.SimpleActionClient("move_base", MoveBaseAction)
@@ -27,7 +32,8 @@ class roa():
     rospy.loginfo("shutdown...")
 
   def button_event(self, data):
-    if (data.button = ButtonEvent.Button0):
+    if (data.button == ButtonEvent.Button0):
+      self.is_finish_fetching = True
       rospy.loginfo("press button 0") 
 
   def run(self):
@@ -42,14 +48,16 @@ class roa():
 
     if is_success:
       rospy.loginfo("Successful reach point")
-      self.sound_play("Please give me coffee, thanks!")    
+      self.is_finish_fetching = False
+      while (self.is_finish_fetching == False):
+        self.sound_play("Please give me coffee, thanks!")
+        rospy.sleep(4)
+      self.sound_play("Thank you!") 
     else:
       rospy.loginfo("Not success, dumb robot...")
 
   def sound_play(self, word):
-    sound_handle = SoundClient()
-    rospy.sleep(1)
-    sound_handle.say(word)
+    self.sound_handle.say(word)
 
 if __name__ == '__main__':
   try:
