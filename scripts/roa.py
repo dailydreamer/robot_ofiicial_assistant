@@ -8,12 +8,9 @@ from sound_play.libsoundplay import SoundClient
 from kobuki_msgs.msg import ButtonEvent
 
 class roa():
-  point_x = 0
-  point_y = 0
-  is_finish_fetching = False
-
   def __init__(self):
-    rospy.init_node('robot_amcl', anonymous=False)
+    # disable_signals so that ros won't stuck the flask server
+    rospy.init_node('robot_amcl', anonymous=False, disable_signals=True)
     rospy.on_shutdown(self.shutdown)
 
     rospy.Subscriber("/mobile_base/events/button", ButtonEvent, self.button_event)
@@ -36,32 +33,25 @@ class roa():
       self.is_finish_fetching = True
       rospy.loginfo("press button 0") 
 
-  def run(self):
+  def run(self, point_x, point_y):
     goal = MoveBaseGoal()
     goal.target_pose.header.frame_id = 'map'
     goal.target_pose.header.stamp = rospy.Time.now()
-    goal.target_pose.pose = Pose(Point(self.point_x, self.point_y, 0), Quaternion(0,0,0,1.0))
+    goal.target_pose.pose = Pose(Point(point_x, point_y, 0), Quaternion(0,0,0,1.0))
 
     self.move_base.send_goal(goal)
 
     is_success = self.move_base.wait_for_result()
 
-    if is_success:
-      rospy.loginfo("Successful reach point")
-      self.is_finish_fetching = False
-      while (self.is_finish_fetching == False):
-        self.sound_play("Please give me coffee, thanks!")
-        rospy.sleep(4)
-      self.sound_play("Thank you!") 
-    else:
-      rospy.loginfo("Not success, dumb robot...")
+    return is_success
 
   def sound_play(self, word):
     self.sound_handle.say(word)
 
 if __name__ == '__main__':
+  # just for test
   try:
     r = roa()
-    r.run()
+    r.run(0, 0)
   except rospy.ROSInterruptException:
     rospy.loginfo("Exception thrown")
