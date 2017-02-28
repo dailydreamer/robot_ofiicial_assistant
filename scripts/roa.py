@@ -26,23 +26,20 @@ class roa():
     self.move_base.wait_for_server()
 
   def shutdown(self):
-    rospy.loginfo("shutdown...")
+    rospy.loginfo("Shutdown...")
 
   def button_event(self, data):
     if (data.button == ButtonEvent.Button0):
-      self.is_finish_fetching = True
-      rospy.loginfo("press button 0") 
+      rospy.loginfo("Pressing button 0") 
 
   def run(self, point_x, point_y):
     goal = MoveBaseGoal()
     goal.target_pose.header.frame_id = 'map'
     goal.target_pose.header.stamp = rospy.Time.now()
+    # ros actionlib needs none zero quaternion, so add small w in quaternion 
     goal.target_pose.pose = Pose(Point(point_x, point_y, 0), Quaternion(0,0,0,1.0))
-
     self.move_base.send_goal(goal)
-
     is_success = self.move_base.wait_for_result()
-
     return is_success
 
   def sound_play(self, word):
