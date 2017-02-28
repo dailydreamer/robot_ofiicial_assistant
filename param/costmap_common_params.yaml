@@ -49,4 +49,10 @@ inflation_layer:
 static_layer:
   enabled:              true
   
-
+sonar_layer:
+  ns:                   ""
+  topics:               ['/ultrasound1','/ultrasound2']
+  clear_threshold:      2
+  mark_threshold:       8
+  no_readings_timeout:  2.0
+  clear_on_max_reading: false

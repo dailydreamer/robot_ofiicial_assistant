@@ -19,6 +19,17 @@
     <arg name="scan_topic" value="/scan_raw" />
   </include>
 
+  <!-- scan filter -->
+  <node pkg="robot_ofiicial_assistant" type="filter" name="scan_filter_fornan" /> 
+
+  <arg name="port" default="/dev/ttyACM0" />
+  <arg name="baud" default="57600" />
+  <!-- ultrasound -->
+  <include file="$(find robot_ofiicial_assistant)/launch/includes/ultrasound.launch">
+    <param name="port" value="$(arg port)"/>
+    <param name="baud" value="$(arg baud)"/>
+  </include>
+
   <!-- Map server -->
   <arg name="map_file" default="/home/robot/mymap.yaml"/>
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
