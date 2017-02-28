@@ -20,7 +20,7 @@
   </include>
 
   <!-- scan filter -->
-  <node pkg="robot_ofiicial_assistant" type="filter" name="scan_filter_fornan" /> 
+  <node pkg="robot_ofiicial_assistant" type="scan_filter" name="scan_filter_fornan" /> 
 
   <arg name="port" default="/dev/ttyACM0" />
   <arg name="baud" default="57600" />
