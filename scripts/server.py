@@ -5,6 +5,7 @@ from roa import roa
 
 from flask import Flask
 from flask import request
+from flask import render_template
 from werkzeug.contrib.cache import SimpleCache
 app = Flask(__name__)
 cache = SimpleCache()
@@ -22,9 +23,9 @@ def hello():
   return "Hello World!"
 
 @app.route("/wants")
-def coffee():
+def wants():
   wants = cache.get("wants")
-  return wants
+  return render_template("wants.html", watns=wants)
   
 def get_location(dx, dy):
   x = dx
@@ -65,7 +66,7 @@ def fetch():
 # /return?x=return_x&y=return_y
 @app.route("/return")
 def ret():
-  self.sound_play("Thank you!")
+  r.sound_play("Thank you!")
   x, y = get_location(return_x, return_y)
   rospy.loginfo("Returning...")
   # location of service caller
