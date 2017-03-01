@@ -25,7 +25,7 @@ def hello():
 @app.route("/wants")
 def wants():
   wants = cache.get("wants")
-  return render_template("wants.html", watns=wants)
+  return render_template("wants.html", wants=wants)
   
 def get_location(dx, dy):
   x = dx
