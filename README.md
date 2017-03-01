@@ -8,9 +8,11 @@ Launch folder contains ros launch files.
 
 Param folder contains some config files used by move_base node.
 
+Src folder contains the code of scan filter that filter the nan number of kinnect.
+
 Scripts folder contains python scipts. `server.py` is a flask server host the webpage shown to people in charge of the food and drinks, and accpet request to control robot. `roa.py` is the ros node that control the robot and used by `server.py`.
 
-## install
+## Install
 
 Put `robot_official_assistant` in src folder of your catkin workspace, then run
 
