@@ -11,8 +11,8 @@ app = Flask(__name__)
 cache = SimpleCache()
 r = roa()
 
-fetch_x = 0.0
-fetch_y = 0.0
+fetch_x = 2.7
+fetch_y = 5.0
 return_x = 0.0
 return_y = 0.0
 
@@ -47,7 +47,7 @@ def fetch():
   x, y = get_location(fetch_x, fetch_y)
   wants = "coffee"
   try:
-    wants = float(request.args.get('wants'))
+    wants = request.args.get('wants')
   except Exception:
     rospy.loginfo("Invalid wants")
   cache.set("wants", wants)
