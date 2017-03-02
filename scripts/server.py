@@ -11,8 +11,8 @@ app = Flask(__name__)
 cache = SimpleCache()
 r = roa()
 
-fetch_x = 2.7
-fetch_y = 5.0
+fetch_x = -3.6
+fetch_y = -4.0
 return_x = 0.0
 return_y = 0.0
 
